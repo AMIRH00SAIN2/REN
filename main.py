@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import httpx
 import logging
-import psutil
+# import psutil   <--- حذف شده
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("REN-Gateway")
@@ -236,6 +236,7 @@ async def api_change_password(request: Request, _=Depends(require_auth)):
 
 @app.get("/stats")
 async def get_stats(_=Depends(require_auth)):
+    # مقادیر psutil با 0 جایگزین شده‌اند (چون psutil حذف شده)
     return {
         "active_connections": len(connections),
         "total_traffic_mb": round(stats["total_bytes"] / (1024 * 1024), 2),
@@ -246,8 +247,8 @@ async def get_stats(_=Depends(require_auth)):
         "recent_errors": list(error_logs)[-10:],
         "links_count": len(LINKS),
         "domain": get_domain(),
-        "cpu_percent": psutil.cpu_percent(interval=0.1),
-        "memory_percent": psutil.virtual_memory().percent,
+        "cpu_percent": 0,          # بدون psutil مقدار 0 برمی‌گردد
+        "memory_percent": 0,       # بدون psutil مقدار 0 برمی‌گردد
         "hourly_traffic": dict(hourly_traffic),
     }
 
@@ -1047,7 +1048,7 @@ body[dir="rtl"]{direction:rtl;text-align:right}
             <th style="width:80px">IPs</th>
             <th style="width:64px">Status</th>
             <th style="width:100px">Actions</th>
-          </tr></thead>
+          </thead>
           <tbody id="links-tbody"></tbody>
         </table>
       </div>
@@ -1264,7 +1265,7 @@ function renderLinks(links){
       <button class="btn-qr" onclick="showQRText('${esc(r.l.vless_link)}')" title="QR">qr</button>
       <button class="btn btn-danger btn-sm" onclick="deleteLink('${r.l.uuid}')" title="Delete">x</button>
     </div></td>
-  </tr>`).join('');
+   </tr>`).join('');
 
   cards.innerHTML=rows.map(r=>`<div class="inbound-card">
     <div class="inbound-card-header">
